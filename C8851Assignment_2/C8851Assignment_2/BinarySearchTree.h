@@ -33,7 +33,7 @@ public:
 	/**
 	 * Copy constructor
 	 */
-	BinarySearchTree(const BinarySearchTree & rhs) : root{ nullptr }
+	BinarySearchTree(const BinarySearchTree & rhs) : root{ nullptr } // Ask Carl what "root{nullptr}" is and what it means when they add a ":" infront of the parameter.
 	{
 		root = clone(rhs.root);
 	}
@@ -49,7 +49,7 @@ public:
 	/**
 	 * Destructor for the tree
 	 */
-	~BinarySearchTree()
+	~BinarySearchTree() // Ask Carl what "~" is
 	{
 		makeEmpty();
 	}
@@ -57,7 +57,7 @@ public:
 	/**
 	 * Copy assignment
 	 */
-	BinarySearchTree & operator=(const BinarySearchTree & rhs)
+	BinarySearchTree & operator=(const BinarySearchTree & rhs) //Ask Carl what this code does
 	{
 		BinarySearchTree copy = rhs;
 		std::swap(*this, copy);
