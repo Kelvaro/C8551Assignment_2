@@ -160,10 +160,11 @@ public:
 private:
 	struct BinaryNode
 	{
+	
 		Comparable element;
 		BinaryNode *left;
 		BinaryNode *right;
-
+		bool flagRemoved = false; //indicates that the node has been deleted. QUESTION 1)a
 		BinaryNode(const Comparable & theElement, BinaryNode *lt, BinaryNode *rt)
 			: element{ theElement }, left{ lt }, right{ rt } { }
 
@@ -198,17 +199,6 @@ private:
 	 * t is the node that roots the subtree.
 	 * Set the new root of the subtree.
 	 */
-	void insert(const Comparable & x, BinaryNode * & t)
-	{
-		if (t == nullptr)
-			t = new BinaryNode{ x, nullptr, nullptr };
-		else if (x < t->element)
-			insert(x, t->left);
-		else if (t->element < x)
-			insert(x, t->right);
-		else
-			;  // Duplicate; do nothing
-	}
 	void insert(Comparable && x, BinaryNode * & t)
 	{
 		if (t == nullptr)
@@ -217,6 +207,9 @@ private:
 			insert(std::move(x), t->left);
 		else if (t->element < x)
 			insert(std::move(x), t->right);
+		else if (t->flagRemoved) // QUESTION 1c)
+			t->flagRemoved = false;
+
 		else
 			;  // Duplicate; do nothing
 	}
@@ -233,18 +226,22 @@ private:
 			return;   // Item not found; do nothing
 		if (x < t->element)
 			remove(x, t->left);
+		t->flagRemoved = true;//QUESTION 1d) sets the flag to true upon node deletion.
 		else if (t->element < x)
 			remove(x, t->right);
+		t->flagRemoved = true;//QUESTION 1d) sets the flag to true upon node deletion.
 		else if (t->left != nullptr && t->right != nullptr) // Two children
 		{
 			t->element = findMin(t->right)->element;
 			remove(t->element, t->right);
+			t->flagRemoved = true;//QUESTION 1d) sets the flag to true upon node deletion.
 		}
 		else
 		{
 			BinaryNode *oldNode = t;
 			t = (t->left != nullptr) ? t->left : t->right;
 			delete oldNode;
+			t->flagRemoved = true;//QUESTION 1d) sets the flag to true upon node deletion.
 		}
 	}
 
@@ -322,14 +319,44 @@ private:
 	/**
 	 * Internal method to print a subtree rooted at t in sorted order.
 	 */
-	void printTree(BinaryNode *t, ostream & out) const
+	void printTree(BinaryNode *t, ostream & out) const //bypass nodes that has been deleted. QUESTION 1)b
 	{
 		if (t != nullptr)
 		{
-			printTree(t->left, out);
-			out << t->element << endl;
-			printTree(t->right, out);
+			//if current one is deleted, check if it has 1 or 2 child, if 1 child just print, if 2 print right.
+				if (t->flagRemoved) //checks if current node is deleted
+				{
+					//print left tree, then vlaue, then right tree
+					//t->element = findMin(t->right)->element;
+					//out << t->element << endl;
+					
+					if (t->right = nullptr) {//if current that has been deleted only contains node to the left, print left
+						printTree(t->left, out);
+						
+
+					}if (t->left = nullptr) {//if current node that has been deleted does not have a node to the left, print right.
+						printTree(t->right, out);
+					}
+					else {// else if the tree does have a node to the right, print left and new value from the right  and print right nodes
+
+
+						printTree(t->left, out);					
+						out<< findMin(t->right)->element; << endl;
+						printTree(t->right, out);
+						}
+					
+
+
+				}
+				else {//else if current node is not deleted, just print
+					printTree(t->left, out);
+					out << t->element; << endl;
+					printTree(t->right, out);
+
+				}
+		
 		}
+		
 	}
 
 	/**
